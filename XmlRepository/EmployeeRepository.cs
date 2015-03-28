@@ -26,14 +26,14 @@ namespace XmlRepository
                 if (employees == null)
                 {
                     employees = new List<Employee>();
-                    LoadEmployeesFromXml();
+                    LoadEmployees();
                 }
 
                 return employees;
             }
         }
 
-        private void LoadEmployeesFromXml()
+        private void LoadEmployees()
         {
             using (var file = new FileStream(Paths.EmployeeXml, FileMode.Open))
             {
@@ -43,44 +43,30 @@ namespace XmlRepository
 
                 while (reader.IsStartElement("Employee"))
                 {
-                    reader.ReadStartElement("Employee");
-
-                    Employee employee = new Employee();
-                    employee.Id = Guid.Parse(reader.GetAttribute("Id"));
-                    employee.Name = reader.GetAttribute("Name");
-                    employee.PrimaryRole = roleRepo.Roles.FirstOrDefault(r => r.Id == Guid.Parse(reader.GetAttribute("PrimaryRole")));
-
-                    reader.ReadEndElement();
+                    var employee = new Employee();
+                    employee.ReadFromXml(reader);
                 }
 
                 reader.ReadEndElement();
             }
         }
 
-        private void SaveEmployeesToXml()
+        private void SaveEmployees()
         {
             using (var file = new FileStream(Paths.EmployeeXml, FileMode.Truncate))
             {
-                var writer = XmlWriter.Create(file);
-
-                writer.WriteStartElement("Employees");
-
-                foreach (var employee in this.Employees)
+                using (var writer = XmlWriter.Create(file))
                 {
-                    writer.WriteStartElement("Employee");
 
-                    writer.WriteAttributeString("Id", employee.Id.ToString());
-                    writer.WriteAttributeString("Name", employee.Name);
+                    writer.WriteStartElement("Employees");
 
-                    if(employee.PrimaryRole != null)
+                    foreach (var employee in this.Employees)
                     {
-                        writer.WriteAttributeString("PrimaryRole", employee.PrimaryRole.Id.ToString());
+                        employee.WriteToXml(writer);
                     }
 
                     writer.WriteEndElement();
                 }
-
-                writer.WriteEndElement();
             }
         }
     }

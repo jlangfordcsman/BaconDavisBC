@@ -12,6 +12,20 @@ namespace XmlRepository
     public class RoleRepository
     {
         private static ICollection<EmployeeRole> roles;
+        private static RoleRepository defaultRepository;
+
+        internal static RoleRepository Default
+        {
+            get
+            {
+                if (defaultRepository == null)
+                {
+                    defaultRepository = new RoleRepository();
+                }
+
+                return defaultRepository;
+            }
+        }
 
         public ICollection<EmployeeRole> Roles
         {
@@ -45,22 +59,18 @@ namespace XmlRepository
         {
             using (var file = new FileStream(Paths.RolesXml, FileMode.Open))
             {
-                var reader = XmlReader.Create(file);
-
-                reader.ReadStartElement("Roles");
-
-                while (reader.IsStartElement("Role"))
+                using (var reader = XmlReader.Create(file))
                 {
-                    var role = new EmployeeRole();
+                    reader.ReadStartElement("Roles");
 
-                    reader.ReadStartElement("Role");
-
-                    role.Id = Guid.Parse(reader.GetAttribute("Id"));
-                    role.Name = reader.GetAttribute("Name");
+                    while (reader.IsStartElement("Role"))
+                    {
+                        var role = new EmployeeRole();
+                        role.ReadFromXml(reader);
+                    }
 
                     reader.ReadEndElement();
                 }
-                reader.ReadEndElement();
             }
         }
 
@@ -68,21 +78,17 @@ namespace XmlRepository
         {
             using (var file = new FileStream(Paths.RolesXml, FileMode.Truncate))
             {
-                var writer = XmlWriter.Create(file);
-
-                writer.WriteStartElement("Roles");
-
-                foreach (var role in this.Roles)
+                using (var writer = XmlWriter.Create(file))
                 {
-                    writer.WriteStartElement("Role");
+                    writer.WriteStartElement("Roles");
 
-                    writer.WriteAttributeString("Id", role.Id.ToString());
-                    writer.WriteAttributeString("Name", role.Name);
+                    foreach (var role in this.Roles)
+                    {
+                        role.WriteToXml(writer);
+                    }
 
                     writer.WriteEndElement();
                 }
-
-                writer.WriteEndElement();
             }
         }
     }

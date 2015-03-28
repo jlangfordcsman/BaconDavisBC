@@ -11,7 +11,7 @@ namespace XmlRepository
 {
     public class ProjectRepository
     {
-        private ICollection<Project> activeProjects;
+        private static ICollection<Project> activeProjects;
 
         public ICollection<Project> ActiveProjects
         {
@@ -23,20 +23,27 @@ namespace XmlRepository
 
                     using (var file = new FileStream(Paths.ActiveProjectsXml, FileMode.Open))
                     {
-                        var reader = XmlReader.Create(file);
-
-                        reader.ReadStartElement("ActiveProjects");
-
-                        while (reader.IsStartElement("Project"))
+                        using (var reader = XmlReader.Create(file))
                         {
-                            reader.ReadStartElement("Project");
 
-                            activeProjects.Add(LoadProjectFromXml(Guid.Parse(reader.GetAttribute("Id"));
+                            try
+                            {
+                                if (reader.IsStartElement("ActiveProjects"))
+                                {
+                                    reader.ReadStartElement("ActiveProjects");
 
-                            reader.ReadEndElement();
+                                    while (reader.IsStartElement("Project"))
+                                    {
+                                        activeProjects.Add(GetProject(Guid.Parse(reader.GetAttribute("Id"))));
+                                        reader.ReadStartElement("Project");
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                // todo: figure out something else to do here rather than swallowing an exception
+                            }
                         }
-
-                        reader.ReadEndElement();
                     }
                 }
 
@@ -44,52 +51,42 @@ namespace XmlRepository
             }
         }
 
-        public Project LoadProjectFromXml(Guid id)
+
+        public Project GetProject(Guid id)
         {
             Project project = new Project();
 
             using (var file = new FileStream(Paths.GetProjectXmlFile(id), FileMode.Open))
             {
-                XmlReader reader = XmlReader.Create(file);
-
-                reader.ReadStartElement("Project");
-
-                project.Id = Guid.Parse(reader.GetAttribute("Id"));
-                project.Name = reader.GetAttribute("Name");
-
-                reader.ReadStartElement("Periods");
-
-                while (reader.IsStartElement("Period"))
+                using (XmlReader reader = XmlReader.Create(file))
                 {
-                    project.Periods.Add(PeriodFromXml(reader));
+                    project.ReadFromXml(reader);
                 }
-
-                reader.ReadEndElement();
-
-                reader.ReadEndElement();
             }
 
             return project;
         }
 
-        public void SaveActiveProjects(ICollection<Project> projects)
+        public void SaveActiveProjects()
         {
             using (var file = new FileStream(Paths.ActiveProjectsXml, FileMode.Truncate))
             {
-                var writer = XmlWriter.Create(file);
-
-                writer.WriteStartElement("ActiveProjects");
-
-                foreach (var project in projects)
+                using (var writer = XmlWriter.Create(file))
                 {
-                    this.SaveProject(project);
 
-                    writer.WriteStartElement("Project");
-                    writer.WriteAttributeString("Id", project.Id.ToString());
+                    writer.WriteStartElement("ActiveProjects");
+
+                    foreach (var project in this.ActiveProjects)
+                    {
+                        this.SaveProject(project);
+
+                        writer.WriteStartElement("Project");
+                        writer.WriteAttributeString("Id", project.Id.ToString());
+                        writer.WriteEndElement();
+                    }
+
                     writer.WriteEndElement();
                 }
-
-                writer.WriteEndElement();
             }
         }
 
@@ -102,93 +99,78 @@ namespace XmlRepository
 
             using (var file = new FileStream(Paths.GetProjectXmlFile(project), FileMode.Truncate))
             {
-                var writer = XmlWriter.Create(file);
-
-                writer.WriteStartElement("Project");
-
-                writer.WriteAttributeString("Id", project.Id.ToString());
-                writer.WriteAttributeString("Name", project.Name);
-
-                writer.WriteStartElement("Periods");
-
-                foreach (var period in project.Periods)
+                using (var writer = XmlWriter.Create(file))
                 {
-                    PeriodToXml(period, writer);
+                    project.WriteToXml(writer);
                 }
-
-                writer.WriteEndElement();
-
-                writer.WriteEndElement();
             }
         }
 
-        private void PeriodToXml(Period period, XmlWriter writer)
+        public Project GetSelectedProject()
         {
-            writer.WriteStartElement("Period");
+            Guid? selectedProjectId = null;
 
-            if (period.Start.HasValue)
+            Project project = null;
+
+            using (var file = new FileStream(Paths.SelectedProjectXml, FileMode.Open))
             {
-                writer.WriteAttributeString("Start", period.Start.ToString());
+                using (var reader = XmlReader.Create(file))
+                {
+
+                    try
+                    {
+                        reader.MoveToContent();
+                        if (reader.IsStartElement("SelectedProject"))
+                        {
+                            selectedProjectId = Guid.Parse(reader.GetAttribute("Id"));
+                            reader.ReadStartElement("SelectedProject");
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        project = AddProject("Unnamed Project");
+                    }
+                }
             }
 
-            if (period.End.HasValue)
+            if (project == null)
             {
-                writer.WriteAttributeString("End", period.End.ToString());
+                project = ActiveProjects.FirstOrDefault(p => p.Id == selectedProjectId);
+            }
+            else
+            {
+                SetSelectedProject(project);
             }
 
-            writer.WriteStartElement("EmployeesInRoles");
-
-            foreach (var employeeInRole in period.EmployeesInRoles)
-            {
-                EmployeeInRoleToXml(employeeInRole, writer);
-            }
-
-            writer.WriteEndElement();
-
-            writer.WriteEndElement();
+            return project;
         }
 
-        private Period PeriodFromXml(XmlReader reader)
+        public void SetSelectedProject(Project project)
         {
-            Period period = new Period();
-
-            reader.ReadStartElement("Period");
-
-            string buf = reader.GetAttribute("Start");
-
-            if(!string.IsNullOrEmpty(buf))
+            using (var file = new FileStream(Paths.SelectedProjectXml, FileMode.Truncate))
             {
-                period.Start = DateTime.Parse(buf);
+                using (var writer = XmlWriter.Create(file))
+                {
+                    writer.WriteStartElement("SelectedProject");
+                    writer.WriteAttributeString("Id", project.Id.ToString());
+                    writer.WriteEndElement();
+                }
             }
-
-            buf = reader.GetAttribute("End");
-
-            if (!string.IsNullOrEmpty(buf))
-            {
-                period.End = DateTime.Parse(buf);
-            }
-            reader.ReadEndElement();
-
-            return period;
         }
 
-        private void EmployeeInRoleToXml(EmployeeInRole employeeInRole, XmlWriter writer)
+        public Project AddProject(string name)
         {
-            writer.WriteStartElement("EmployeeInRole");
+            Project project = new Project()
+            {
+                Id = Guid.NewGuid(),
+                Name = name
+            };
 
-            writer.WriteStartElement("Employee");
+            ActiveProjects.Add(project);
 
-            writer.WriteAttributeString("Id", employeeInRole.Employee.Id.ToString());
-            writer.WriteAttributeString("Name", employeeInRole.Employee.Name);
+            SaveActiveProjects();
 
-            writer.WriteEndElement();
-
-            writer.WriteStartElement("Role");
-            writer.WriteAttributeString("Id", employeeInRole.Role.Id.ToString());
-            writer.WriteAttributeString("Name", employeeInRole.Role.Name);
-            writer.WriteEndElement();
-
-            writer.WriteEndElement();
+            return project;
         }
     }
 }

@@ -11,18 +11,37 @@ namespace XmlRepository
     public static class Paths
     {
         private static readonly string root = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        private const string appRoot = "BaconDavisBC";
+        private const string appRoot = "BillingsConcrete";
+        private const string baconDavisRoot = "BaconDavis";
+
         private const string projects = "Projects";
 
         private const string activeProjectsXml = "ActiveProjects.xml";
         private const string employeesXml = "Employees.xml";
         private const string rolesXml = "Roles.xml";
+        private const string selectedProjectXml = "SelectedProject.xml";
 
         public static string AppRoot
         {
             get
             {
                 string path = string.Format(@"{0}\{1}", Paths.root, Paths.appRoot);
+
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static string BaconDavisRoot
+        {
+            get
+            {
+                string path = string.Format(@"{0}\{1}\", Paths.AppRoot, Paths.baconDavisRoot);
 
                 if (!Directory.Exists(path))
                 {
@@ -37,11 +56,11 @@ namespace XmlRepository
         {
             get
             {
-                string path = string.Format(@"{0}\{1}", Paths.AppRoot, Paths.activeProjectsXml);
+                string path = string.Format(@"{0}\{1}", Paths.BaconDavisRoot, Paths.activeProjectsXml);
 
                 if (!File.Exists(path))
                 {
-                    File.Create(path);
+                    using (File.Create(path)) { };
                 }
 
                 return path;
@@ -52,7 +71,7 @@ namespace XmlRepository
         {
             get
             {
-                string path = string.Format(@"{0}\{1}\", Paths.AppRoot, Paths.projects);
+                string path = string.Format(@"{0}\{1}\", Paths.BaconDavisRoot, Paths.projects);
 
                 if (!Directory.Exists(path))
                 {
@@ -74,7 +93,7 @@ namespace XmlRepository
 
             if (!File.Exists(path))
             {
-                File.Create(path);
+                using (File.Create(path)) { };
             }
 
             return path;
@@ -88,7 +107,7 @@ namespace XmlRepository
 
                 if (!File.Exists(path))
                 {
-                    File.Create(path);
+                    using (File.Create(path)) { }
                 }
 
                 return path;
@@ -99,11 +118,26 @@ namespace XmlRepository
         {
             get
             {
-                string path = string.Format(@"{0}\{1}", Paths.AppRoot, Paths.rolesXml);
+                string path = string.Format(@"{0}\{1}", Paths.BaconDavisRoot, Paths.rolesXml);
 
                 if (!File.Exists(path))
                 {
-                    File.Create(path);
+                    using (File.Create(path)) { }
+                }
+
+                return path;
+            }
+        }
+
+        public static string SelectedProjectXml
+        {
+            get
+            {
+                string path = string.Format(@"{0}\{1}", Paths.BaconDavisRoot, Paths.selectedProjectXml);
+
+                if (!File.Exists(path))
+                {
+                    using (File.Create(path)) { };
                 }
 
                 return path;
