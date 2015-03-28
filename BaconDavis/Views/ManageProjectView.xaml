@@ -14,11 +14,27 @@
                  SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name"/>
         
         <DockPanel Grid.Column="1">
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Label Content="New Project Name:" FontWeight="Bold" />
-                <TextBox Text="{Binding NewProjectName}" Width="150"/>
-                <Button Command="{Binding AddCommand}" Content="Add" />
-            </StackPanel>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="TableLabel" Width="Auto"/>
+                    <ColumnDefinition SharedSizeGroup="TableData" Width="Auto" />
+                    <ColumnDefinition SharedSizeGroup="TableAction" Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <Label Content="Project Name" VerticalAlignment="Top" Width="125" Grid.Column="0"/>
+                <TextBox Text="{Binding SelectedProject.Name, UpdateSourceTrigger=PropertyChanged}" Width="150" Grid.Column="1"/>
+            </Grid>
+            
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="TableLabel" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="TableData" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="TableAction" />
+                </Grid.ColumnDefinitions>
+                <Label Content="New Project Name:" Width="125"/>
+                <TextBox Text="{Binding NewProjectName, UpdateSourceTrigger=PropertyChanged}" Width="150" Grid.Column="1"/>
+                <Button Command="{Binding AddCommand}" Content="Add" Grid.Column="2"/>
+            </Grid>
             
             <Button Content="Done" Command="{Binding DoneCommand}" DockPanel.Dock="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
         </DockPanel>
