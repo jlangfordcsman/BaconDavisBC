@@ -31,12 +31,16 @@ namespace BaconDavis.ViewModels
 
             AddCommand = new DelegateCommand(AddProject, CanAddProject);
 
+            DeleteCommand = new DelegateCommand<Project>(DeleteProject, CanDeleteProject);
+
             this.regionManager = regionManager;
         }
 
         public DelegateCommand DoneCommand { get; set; }
 
         public DelegateCommand AddCommand { get; set; }
+
+        public DelegateCommand<Project> DeleteCommand { get; set; }
 
         public Project SelectedProject
         {
@@ -104,6 +108,7 @@ namespace BaconDavis.ViewModels
 
         public void OnNavigatedFrom(NavigationContext context)
         {
+            projectRepository.SaveActiveProjects();
         }
 
         public bool IsNavigationTarget(NavigationContext context)
@@ -123,6 +128,22 @@ namespace BaconDavis.ViewModels
         private bool CanAddProject()
         {
             return !string.IsNullOrEmpty(this.newProjectName);
+        }
+
+        private void DeleteProject(Project project)
+        {
+            projectRepository.ActiveProjects.Remove(project);
+            projectRepository.SaveActiveProjects();
+            LoadActiveProjects();
+
+            this.SelectedProject = this.ActiveProjects.FirstOrDefault();
+
+            this.RaisePropertyChanged(() => this.ActiveProjects);
+        }
+
+        private bool CanDeleteProject(Project project)
+        {
+            return true;
         }
     }
 }
