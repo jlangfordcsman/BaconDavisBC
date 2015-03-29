@@ -1,5 +1,4 @@
-﻿using Employees.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,13 +16,12 @@ using System.Windows.Shapes;
 namespace Employees.Views
 {
     /// <summary>
-    /// Interaction logic for MainView.xaml
+    /// Interaction logic for EditView.xaml
     /// </summary>
-    public partial class MainView : UserControl
+    public partial class EditView : UserControl
     {
-        public MainView(MainViewModel vm)
+        public EditView()
         {
-            this.DataContext = vm;
             InitializeComponent();
         }
     }
