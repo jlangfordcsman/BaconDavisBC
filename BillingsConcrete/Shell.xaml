@@ -4,13 +4,36 @@
         xmlns:regions="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism"
         Title="Billings Concrete" Height="768" Width="1024">
     <Grid>
+        <Grid.Style>
+            <Style TargetType="Grid" >
+                <Setter Property="Background" Value="#0E6A04" />
+            </Style>
+        </Grid.Style>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-    
-        <ItemsControl regions:RegionManager.RegionName="MenuRegion" />
-        <ContentControl regions:RegionManager.RegionName="MainRegion" Grid.Column="1"/>
+
+        <Border BorderBrush="Black" BorderThickness="2" Margin="5" MinWidth="40" CornerRadius="20" >
+                <ItemsControl regions:RegionManager.RegionName="MenuRegion" >
+                    <ItemsControl.Style>
+                        <Style TargetType="ItemsControl">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush>
+                                    <GradientStop Color="#BFCEBD" Offset="0" />
+                                        <GradientStop Color="White" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ItemsControl.Style>
+                </ItemsControl>
+            </Border>
+        <Border BorderBrush="Black" BorderThickness="2" Margin="0,5,5,5" Grid.Column="1" >
+          <ContentControl regions:RegionManager.RegionName="MainRegion" Grid.Column="1" />
+        </Border>
     </Grid>
 </Window>
 

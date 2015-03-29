@@ -6,8 +6,8 @@
             <Setter Property="Background">
                 <Setter.Value>
                     <LinearGradientBrush>
-                        <GradientStop Color="LightGreen" Offset="0" />
-                        <GradientStop Color="LightGray" Offset="1" />
+                        <GradientStop Color="#72AC6C" Offset="0" />
+                        <GradientStop Color="#BFCEBD" Offset="1" />
                     </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
@@ -20,6 +20,12 @@
         <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}">
             <Setter Property="Padding" Value="5" />
         </Style>
+        
+        <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" x:Key="MenuButtonStyle">
+            <Setter Property="MinWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
+            <Setter Property="MinHeight" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+        </Style>
+        
         <Style TargetType="ComboBox" BasedOn="{StaticResource BaseStyle}" />
         <Style TargetType="Label" BasedOn="{StaticResource BaseStyle}">
             <Setter Property="FontWeight" Value="Bold" />

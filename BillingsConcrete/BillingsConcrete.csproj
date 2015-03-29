@@ -123,6 +123,10 @@
       <Project>{31e598ae-c383-4489-9183-564997a0effe}</Project>
       <Name>Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Employees\Employees.csproj">
+      <Project>{74685f87-fc6f-4a3d-b333-afbc785579f2}</Project>
+      <Name>Employees</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
       <Project>{25b26eac-b04e-4dd3-933f-36ae5a36b1ad}</Project>
       <Name>Infrastructure</Name>
