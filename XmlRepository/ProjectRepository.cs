@@ -39,7 +39,7 @@ namespace XmlRepository
                                     }
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
                                 // todo: figure out something else to do here rather than swallowing an exception
                             }
@@ -126,7 +126,7 @@ namespace XmlRepository
                             reader.ReadStartElement("SelectedProject");
                         }
                     }
-                    catch(Exception e)
+                    catch(Exception ex)
                     {
                         project = AddProject("Unnamed Project");
                     }

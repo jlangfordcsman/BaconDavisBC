@@ -33,8 +33,6 @@ namespace XmlRepository
             reader.ReadStartElement("Employee");
 
             employee.PrimaryRole = RoleRepository.Default.Roles.FirstOrDefault(r => r.Id == Guid.Parse(reader.GetAttribute("PrimaryRole")));
-
-            reader.ReadEndElement();
         }
     }
 }
