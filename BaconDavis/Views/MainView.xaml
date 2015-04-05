@@ -15,7 +15,8 @@
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <Label Content="{Binding SelectedProject.ProjectName}" DockPanel.Dock="Left" HorizontalAlignment="Stretch" FontSize="20"/>
+            <Label Content="{Binding SelectedProject.ProjectName}" DockPanel.Dock="Left" HorizontalAlignment="Stretch" Style="{StaticResource PageHeaderStyle}"/>
+            
             <Button Content="Select And Manage Projects" Command="{Binding ManageProjectsCommand}" Margin="5" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
         </DockPanel>
     </Grid>

@@ -32,5 +32,20 @@
         </Style>  
         <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
         <Style TargetType="ListBox" BasedOn="{StaticResource BaseStyle}" />
+        
+        <Style TargetType="Label" BasedOn="{StaticResource BaseStyle}" x:Key="PageHeaderStyle">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+        
+        <Style TargetType="Control" BasedOn="{StaticResource FormBackgroundStyle}" x:Key="AddControlStyle">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Salmon" Offset="0" />
+                        <GradientStop Color="#BFCEBD" Offset="1" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>

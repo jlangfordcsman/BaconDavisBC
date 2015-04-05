@@ -59,17 +59,23 @@ namespace XmlRepository
         {
             using (var file = new FileStream(Paths.RolesXml, FileMode.Open))
             {
-                using (var reader = XmlReader.Create(file))
+                if (file.Length > 0)
                 {
-                    reader.ReadStartElement("Roles");
-
-                    while (reader.IsStartElement("Role"))
+                    using (var reader = XmlReader.Create(file))
                     {
-                        var role = new EmployeeRole();
-                        role.ReadFromXml(reader);
-                    }
 
-                    reader.ReadEndElement();
+                        reader.MoveToContent();
+
+                        reader.ReadStartElement("Roles");
+
+                        while (reader.IsStartElement("Role"))
+                        {
+                            var role = new EmployeeRole();
+                            role.ReadFromXml(reader);
+                        }
+
+                        reader.ReadEndElement();
+                    }
                 }
             }
         }

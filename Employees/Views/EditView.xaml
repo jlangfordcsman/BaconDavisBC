@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             mc:Ignorable="d" >
     <StackPanel Grid.IsSharedSizeScope="True">
+        <Button Command="{Binding NewCommand}" Content="New" HorizontalAlignment="Left"/>
         <Grid>
+            
             <Grid.ColumnDefinitions>
                 <ColumnDefinition SharedSizeGroup="TableLabel" />
                 <ColumnDefinition SharedSizeGroup="TableData" />
             </Grid.ColumnDefinitions>
             
             <Label Content="Name" />
-            <TextBox Text="{Binding Name}" Grid.Column="1" Width="200"/>
+            <TextBox Text="{Binding SelectedEmployee.Name}" Grid.Column="1" Width="250"/>
         </Grid>
     </StackPanel>
 </UserControl>

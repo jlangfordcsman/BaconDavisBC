@@ -12,12 +12,15 @@ namespace XmlRepository
     {
         private static readonly string root = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private const string appRoot = "BillingsConcrete";
+
         private const string baconDavisRoot = "BaconDavis";
+        private const string employeesRoot = "Employees";
 
         private const string projects = "Projects";
 
         private const string activeProjectsXml = "ActiveProjects.xml";
-        private const string employeesXml = "Employees.xml";
+        private const string activeEmployeesXml = "ActiveEmployees.xml";
+
         private const string rolesXml = "Roles.xml";
         private const string selectedProjectXml = "SelectedProject.xml";
 
@@ -42,6 +45,21 @@ namespace XmlRepository
             get
             {
                 string path = string.Format(@"{0}\{1}\", Paths.AppRoot, Paths.baconDavisRoot);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static string EmployeesRoot
+        {
+            get
+            {
+                string path = string.Format(@"{0}\{1}\", Paths.AppRoot, Paths.employeesRoot);
 
                 if (!Directory.Exists(path))
                 {
@@ -99,11 +117,23 @@ namespace XmlRepository
             return path;
         }
 
+        public static string GetEmployeeXmlFile(Guid id)
+        {
+            string path = string.Format(@"{0}\{1}.xml", Paths.EmployeesRoot, id.ToString());
+
+            if (!File.Exists(path))
+            {
+                using (File.Create(path)) { };
+            }
+
+            return path;
+        }
+
         public static string EmployeeXml
         {
             get
             {
-                string path = string.Format(@"{0}\{1}", Paths.AppRoot, Paths.employeesXml);
+                string path = string.Format(@"{0}\{1}", Paths.EmployeesRoot, Paths.activeEmployeesXml);
 
                 if (!File.Exists(path))
                 {
