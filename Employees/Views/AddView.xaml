@@ -20,7 +20,11 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Name" />
-                <TextBox Text="{Binding NewEmployeeName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Width="250"/>
+                <TextBox Text="{Binding NewEmployeeName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Width="250">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding AddCommand}" Key="Enter" />
+                    </TextBox.InputBindings>
+                </TextBox>
             </Grid>
         </StackPanel>
         
